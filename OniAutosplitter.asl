@@ -8,6 +8,11 @@ state("Oni", "EN")
 	bool endcheck : 0x1EC0C4; // 5EC0C4
 	
 	//int checpoint : 0x1ECC54;
+	
+	float coord_x : 0x1ECE7C, 0xB0, 0xC4; // 5ECE7C, b0, c4
+	float coord_y : 0x1ECE7C, 0xB0, 0xCC; // 5ECE7C, b0, cc	
+	int konoko_hp : 0x236514, 0x38; // 636514
+	int enemy_hp : 0x23a2a0, 0x38; // 63a2a0 + 0x38
 }
 
 state("Oni", "RU")
@@ -18,10 +23,20 @@ state("Oni", "RU")
 	
 	bool preload_state : 0x1E71F8; // 5E71F8
 	bool endcheck : 0x1E7A78; // 005E7A78
+	
+	float coord_x : 0x1e87d4, 0xB0, 0xC4; // 5e87d4, b0, c4
+	float coord_y : 0x1e87d4, 0xB0, 0xCC; // 5e87d4, b0, cc	
+	int konoko_hp : 0x231e54, 0x38; // 631e54
+	//int enemy_hp : 0x1e4ffc, 0x38; // 5e4ffc + 0x38
+	int enemy_hp : 0x235be0, 0x38; // 635be0 + 0x38
 }
 
 init
 {
+	vars.Konoko_Speed = 0;
+	vars.Konoko_HP = 0;
+	vars.Enemy_HP = 0;
+	
 	vars.split = 0;
 	vars.resetlock = false;
 	
@@ -89,6 +104,15 @@ init
 
 update
 {
+	current.coord_xpow = (float)Math.Pow(current.coord_x, 2);
+	current.coord_ypow = (float)Math.Pow(current.coord_y, 2);
+	current.speed = Math.Round((Decimal)(float)Math.Sqrt(current.coord_xpow + current.coord_ypow), 2, MidpointRounding.AwayFromZero);
+	current.speed = (int)(current.speed * 100);
+	
+	vars.Konoko_Speed = current.speed;
+	vars.Konoko_HP = current.konoko_hp;
+	vars.Enemy_HP = current.enemy_hp;
+	
 	//if(current.checpoint == 0 && current.checpoint != old.checpoint)
 	//{
 		//print("HELLO");
