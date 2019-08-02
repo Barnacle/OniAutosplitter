@@ -12,6 +12,7 @@ state("Oni", "EN")
 	float coord_x : 0x1ECE7C, 0xB0, 0xC4; // 5ECE7C, b0, c4
 	float coord_y : 0x1ECE7C, 0xB0, 0xCC; // 5ECE7C, b0, cc	
 	int konoko_hp : 0x236514, 0x38; // 636514
+	int konoko_shield: 0x230FE8;
 	int enemy_hp : 0x23a2a0, 0x38; // 63a2a0 + 0x38
 }
 
@@ -27,6 +28,7 @@ state("Oni", "RU")
 	float coord_x : 0x1e87d4, 0xB0, 0xC4; // 5e87d4, b0, c4
 	float coord_y : 0x1e87d4, 0xB0, 0xCC; // 5e87d4, b0, cc	
 	int konoko_hp : 0x231e54, 0x38; // 631e54
+	int konoko_shield: 0x22C928;
 	//int enemy_hp : 0x1e4ffc, 0x38; // 5e4ffc + 0x38
 	int enemy_hp : 0x235be0, 0x38; // 635be0 + 0x38
 }
@@ -34,7 +36,7 @@ state("Oni", "RU")
 init
 {
 	vars.Konoko_Speed = 0;
-	vars.Konoko_HP = 0;
+	vars.Konoko_HP_Shield = 0;
 	vars.Enemy_HP = 0;
 	
 	vars.split = 0;
@@ -110,7 +112,7 @@ update
 	current.speed = (int)(current.speed * 100);
 	
 	vars.Konoko_Speed = current.speed;
-	vars.Konoko_HP = current.konoko_hp;
+	vars.Konoko_HP_Shield = current.konoko_hp.ToString() + "/" + current.konoko_shield.ToString();
 	vars.Enemy_HP = current.enemy_hp;
 	
 	//if(current.checpoint == 0 && current.checpoint != old.checpoint)
