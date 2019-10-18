@@ -14,6 +14,12 @@ state("Oni", "EN")
 	int konoko_hp : 0x236514, 0x38; // 636514
 	int konoko_shield: 0x230FE8;
 	int enemy_hp : 0x23a2a0, 0x38; // 63a2a0 + 0x38
+	
+	int time : 0x2582C0;
+	bool f1 : 0x1CB484;
+	byte message : 0x1E96E1;
+	bool not_mainmenu : 0x13D878;
+	bool loading_screen : 0x2BBA23;
 }
 
 state("Oni", "RU")
@@ -31,16 +37,38 @@ state("Oni", "RU")
 	int konoko_shield: 0x22C928;
 	//int enemy_hp : 0x1e4ffc, 0x38; // 5e4ffc + 0x38
 	int enemy_hp : 0x235be0, 0x38; // 635be0 + 0x38
+	
+	int time : 0x253C00;
+	bool f1 : 0x1C6E58;
+	byte message : 0x1E50A9;
+	bool not_mainmenu : 0x13A454;
+	bool loading_screen : 0x2B7363;
+}
+
+startup {
+	settings.Add("F1time", true, "IGT - Time during F1");
+	settings.Add("MessageTime", true, "IGT - Time during Messages");
+	settings.Add("MMTime", true, "IGT - Time during Main Menu");
+	settings.Add("LoaingTime", true, "IGT - Time during Loading Screen");
+	
+	vars.split = 0;
 }
 
 init
-{
+{	
 	vars.Konoko_Speed = 0;
-	vars.Konoko_HP_Shield = 0;
+	vars.Konoko_HP_Shield = "0/0";
 	vars.Enemy_HP = 0;
 	
-	vars.split = 0;
+	vars.totalGameTime = 0;
+	vars.currentTime = 0;
+	vars.pauseTime = 0;
+	vars.tempStartPause = DateTime.Now;
+	vars.loadingTime = 0;
+	vars.tempStartLoading = DateTime.Now;
+	
 	vars.resetlock = false;
+	vars.juststarted = false;
 	
 	vars.LEVEL0_data = new byte[3];
 	vars.LEVEL1_data = new byte[3];
@@ -124,9 +152,9 @@ update
 	if(current.preload_state == false)
 		vars.resetlock = false;
 		
-		
 	//print(vars.LEVEL0_data[0] + " " + vars.LEVEL0_data[1] + " " + vars.LEVEL0_data[2]);
 	
+	//print(vars.juststarted.ToString());
 	//print(current.anim[5].ToString());
 	//print(current.save_point);
 	//print(vars.split.ToString());
@@ -137,6 +165,14 @@ update
 
 start
 {
+	current.GameTime = TimeSpan.Zero;
+	vars.totalGameTime = 0;
+	vars.currentTime = 0;
+	vars.pauseTime = 0;
+	vars.tempStartPause = DateTime.Now;
+	vars.loadingTime = 0;
+	vars.tempStartLoading = DateTime.Now;
+	
 	if (current.level_data[0] == vars.LEVEL0_data[0]
 		&& current.level_data[1] == vars.LEVEL0_data[1]
 		&& current.level_data[2] == vars.LEVEL0_data[2]
@@ -152,6 +188,8 @@ start
 			&& current.anim[7] == 195)
 		{
 			vars.split = 0;
+			vars.totalGameTime = 0.01;
+			vars.juststarted = true;
 			print("START");
 			return true;
 		}
@@ -287,7 +325,7 @@ split
 
 reset
 {
-	if(vars.resetlock == false)
+	if(vars.resetlock == false && vars.juststarted == false)
 	{
 		if (current.level_data[0] == vars.LEVEL0_data[0]
 			&& current.level_data[1] == vars.LEVEL0_data[1]
@@ -303,11 +341,82 @@ reset
 				&& current.anim[6] == 169
 				&& current.anim[7] == 195)
 			{
+				current.GameTime = TimeSpan.Zero;
+				vars.totalGameTime = 0;
+				vars.currentTime = 0;
+				vars.pauseTime = 0;
+				vars.tempStartPause = DateTime.Now;
+				vars.loadingTime = 0;
+				vars.tempStartLoading = DateTime.Now;
+				
 				vars.resetlock = true;
 				vars.split = 0;
 				print("RESET");
 				return true;
 			}
 		}
+	}
+}
+
+gameTime
+{
+	if(vars.totalGameTime > 0)
+	{
+		if (!(current.anim[0] == 130
+				&& current.anim[1] == 125
+				&& current.anim[2] == 140
+				&& current.anim[3] == 196
+				&& current.anim[4] == 165
+				&& current.anim[5] == 15
+				&& current.anim[6] == 169
+				&& current.anim[7] == 195))
+		{
+			vars.juststarted = false;
+		}
+		
+		if(Convert.ToSingle(current.time) / 60 == 0)
+		{
+			vars.totalGameTime += vars.currentTime;
+			if((settings["MMTime"] && !current.not_mainmenu))
+				vars.totalGameTime += vars.pauseTime;
+				
+			vars.currentTime = 0;
+			vars.pauseTime = 0;
+			
+			if(settings["LoaingTime"] && current.loading_screen)
+				vars.loadingTime = (DateTime.Now - vars.tempStartLoading).TotalMilliseconds / 1000;
+			else
+				vars.tempStartLoading = DateTime.Now;
+		}
+		else
+		{
+			vars.totalGameTime += vars.loadingTime;
+			vars.loadingTime = 0;
+		
+			vars.currentTime = Convert.ToSingle(current.time) / 60;
+			
+			if(settings["F1time"] || settings["MessageTime"] || settings["MMTime"] || settings["LoaingTime"])
+			{
+				if((settings["F1time"] && current.f1)
+					|| (settings["MessageTime"] && current.message == 1 && current.not_mainmenu)
+					|| (settings["MMTime"] && !current.not_mainmenu)
+					|| (settings["LoaingTime"] && current.loading_screen))
+				{
+					vars.pauseTime = (DateTime.Now - vars.tempStartPause).TotalMilliseconds / 1000;
+					vars.tempStartLoading = DateTime.Now;
+				}
+				else
+				{
+					vars.totalGameTime += vars.pauseTime;
+					vars.pauseTime = 0;
+					vars.tempStartPause = DateTime.Now;
+					vars.tempStartLoading = DateTime.Now;
+				}
+			}
+		}
+		
+		//print(vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.pauseTime.ToString() + " " + vars.loadingTime.ToString());
+			
+		return TimeSpan.FromSeconds(vars.totalGameTime + vars.currentTime + vars.pauseTime + vars.loadingTime );
 	}
 }
