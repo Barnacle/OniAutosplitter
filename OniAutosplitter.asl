@@ -49,7 +49,7 @@ startup {
 	settings.Add("F1time", true, "IGT - Time during F1");
 	settings.Add("MessageTime", true, "IGT - Time during Messages");
 	settings.Add("MMTime", true, "IGT - Time during Main Menu");
-	settings.Add("LoaingTime", true, "IGT - Time during Loading Screen");
+	settings.Add("LoadingTime", false, "IGT - Time during Loading Screen (Broken with HZ Patch)");
 	
 	vars.split = 0;
 }
@@ -383,7 +383,7 @@ gameTime
 			vars.currentTime = 0;
 			vars.pauseTime = 0;
 			
-			if(settings["LoaingTime"] && current.loading_screen)
+			if(settings["LoadingTime"] && current.loading_screen)
 				vars.loadingTime = (DateTime.Now - vars.tempStartLoading).TotalMilliseconds / 1000;
 			else
 				vars.tempStartLoading = DateTime.Now;
@@ -395,12 +395,12 @@ gameTime
 		
 			vars.currentTime = Convert.ToSingle(current.time) / 60;
 			
-			if(settings["F1time"] || settings["MessageTime"] || settings["MMTime"] || settings["LoaingTime"])
+			if(settings["F1time"] || settings["MessageTime"] || settings["MMTime"] || settings["LoadingTime"])
 			{
 				if((settings["F1time"] && current.f1)
 					|| (settings["MessageTime"] && current.message == 1 && current.not_mainmenu)
 					|| (settings["MMTime"] && !current.not_mainmenu)
-					|| (settings["LoaingTime"] && current.loading_screen))
+					|| (settings["LoadingTime"] && current.loading_screen))
 				{
 					vars.pauseTime = (DateTime.Now - vars.tempStartPause).TotalMilliseconds / 1000;
 					vars.tempStartLoading = DateTime.Now;
