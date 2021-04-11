@@ -15,14 +15,8 @@ state("Oni", "EN")
 	int konoko_shield: 0x230FE8;
 	int enemy_hp : 0x23a2a0, 0x38; // 63a2a0 + 0x38
 	
-	int time : 0x2582C0;
-	bool f1 : 0x1CB484;
-	byte message : 0x1E96E1;
-	bool not_mainmenu : 0x13D878;
-	bool loading_screen : 0x1E9528;
-	
-	bool cutscene : 0x0014D64C;	
-	byte2 igtStart: 0x2574D0;
+	int time : 0x2582C0;	
+	bool cutscene : 0x0014D64C;
 	short igtPause: 0x1ECE7C, 0x1679AC;
 	int dialog: 0x236514, 0x04;
 }
@@ -44,10 +38,6 @@ state("Oni", "RU")
 	int enemy_hp : 0x235be0, 0x38; // 635be0 + 0x38
 	
 	int time : 0x253C00;
-	bool f1 : 0x1C6E58;
-	byte message : 0x1E50A9;
-	bool not_mainmenu : 0x13A454;
-	bool loading_screen : 0x2B7363;
 }
 
 startup {	
@@ -413,7 +403,6 @@ gameTime
 		
 		if (vars.split == 0 && vars.totalGameTime == 0.01)
 		{
-			//if (!(current.igtStart[0] == 0x55 && current.igtStart[1] == 0xF7))
 			if (current.igtPause == 0)
 			{
 				vars.substractTime = vars.currentTime;
@@ -426,7 +415,7 @@ gameTime
 			vars.justsplitted = true;
 		}
 		
-		if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted || current.loading_screen)
+		if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted)
 		{
 			if (vars.cutsceneTimeStamp == 0)
 				vars.cutsceneTimeStamp = vars.currentTime;
