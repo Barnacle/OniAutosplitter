@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="31">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>0</ID>
+      <Description>"level_data"</Description>
+      <LastState Value="0063FA00" RealAddress="005EB6F0"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>4 Bytes</VariableType>
+      <Address>oni.exe+1EB6F0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"anim"</Description>
+      <LastState Value="148 83 132 196 17 28 112 66" RealAddress="005EB700"/>
+      <VariableType>Array of byte</VariableType>
+      <ByteLength>8</ByteLength>
+      <Address>oni.exe+1EB700</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"save_point"</Description>
+      <LastState RealAddress="005ECC10"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>String</VariableType>
+      <Length>20</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>oni.exe+1ECC10</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"preload_state"</Description>
+      <LastState Value="1" RealAddress="005EB84C"/>
+      <VariableType>Byte</VariableType>
+      <Address>oni.exe+1EB84C</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"endcheck"</Description>
+      <LastState Value="0" RealAddress="005EC0C4"/>
+      <VariableType>Byte</VariableType>
+      <Address>oni.exe+1EC0C4</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>"coord_x"</Description>
+      <LastState Value="-0.0007653511711" RealAddress="0766636C"/>
+      <VariableType>Float</VariableType>
+      <Address>oni.exe+1ECE7C</Address>
+      <Offsets>
+        <Offset>C4</Offset>
+        <Offset>B0</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>6</ID>
+      <Description>"coord_y"</Description>
+      <LastState Value="-0.0001227014145" RealAddress="07666374"/>
+      <VariableType>Float</VariableType>
+      <Address>oni.exe+1ECE7C</Address>
+      <Offsets>
+        <Offset>CC</Offset>
+        <Offset>B0</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>"konoko_hp"</Description>
+      <LastState Value="396" RealAddress="075B12D8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>oni.exe+236514</Address>
+      <Offsets>
+        <Offset>38</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>8</ID>
+      <Description>"konoko_shield"</Description>
+      <LastState Value="0" RealAddress="00630FE8"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>oni.exe+230FE8</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>9</ID>
+      <Description>"enemy_hp"</Description>
+      <VariableType>4 Bytes</VariableType>
+      <Address>oni.exe+23a2a0</Address>
+      <Offsets>
+        <Offset>38</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>10</ID>
+      <Description>"time"</Description>
+      <LastState Value="36" RealAddress="006582C0"/>
+      <VariableType>4 Bytes</VariableType>
+      <Address>oni.exe+2582C0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>11</ID>
+      <Description>"cutscene"</Description>
+      <LastState Value="1" RealAddress="0054D64C"/>
+      <VariableType>Byte</VariableType>
+      <Address>oni.exe+0014D64C</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>12</ID>
+      <Description>"igtPause"</Description>
+      <LastState Value="0" RealAddress="077179EC"/>
+      <VariableType>Byte</VariableType>
+      <Address>oni.exe+1ECE7C</Address>
+      <Offsets>
+        <Offset>1679AC</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>13</ID>
+      <Description>"dialog"</Description>
+      <LastState Value="0" RealAddress="075B12A4"/>
+      <VariableType>Byte</VariableType>
+      <Address>oni.exe+236514</Address>
+      <Offsets>
+        <Offset>4</Offset>
+      </Offsets>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
