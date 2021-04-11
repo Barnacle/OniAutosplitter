@@ -19,7 +19,12 @@ state("Oni", "EN")
 	bool f1 : 0x1CB484;
 	byte message : 0x1E96E1;
 	bool not_mainmenu : 0x13D878;
-	bool loading_screen : 0x2BBA23;
+	bool loading_screen : 0x1E9528;
+	
+	bool cutscene : 0x0014D64C;	
+	byte2 igtStart: 0x2574D0;
+	short igtPause: 0x1ECE7C, 0x1679AC;
+	int dialog: 0x236514, 0x04;
 }
 
 state("Oni", "RU")
@@ -45,12 +50,7 @@ state("Oni", "RU")
 	bool loading_screen : 0x2B7363;
 }
 
-startup {
-	settings.Add("F1time", true, "IGT - Time during F1");
-	settings.Add("MessageTime", true, "IGT - Time during Messages");
-	settings.Add("MMTime", true, "IGT - Time during Main Menu");
-	settings.Add("LoadingTime", false, "IGT - Time during Loading Screen (Broken with HZ Patch)");
-	
+startup {	
 	vars.split = 0;
 }
 
@@ -61,14 +61,14 @@ init
 	vars.Enemy_HP = 0;
 	
 	vars.totalGameTime = 0;
+	vars.substractTime = 0;
+	vars.timeBool = false;
 	vars.currentTime = 0;
-	vars.pauseTime = 0;
-	vars.tempStartPause = DateTime.Now;
-	vars.loadingTime = 0;
-	vars.tempStartLoading = DateTime.Now;
 	
 	vars.resetlock = false;
 	vars.juststarted = false;
+	vars.justsplitted = false;
+	
 	
 	vars.LEVEL0_data = new byte[3];
 	vars.LEVEL1_data = new byte[3];
@@ -167,11 +167,11 @@ start
 {
 	current.GameTime = TimeSpan.Zero;
 	vars.totalGameTime = 0;
+	vars.substractTime = 0;
+	vars.cutsceneTime = 0;
+	vars.cutsceneTimeStamp = 0;
+	vars.timeBool = false;
 	vars.currentTime = 0;
-	vars.pauseTime = 0;
-	vars.tempStartPause = DateTime.Now;
-	vars.loadingTime = 0;
-	vars.tempStartLoading = DateTime.Now;
 	
 	if (current.level_data[0] == vars.LEVEL0_data[0]
 		&& current.level_data[1] == vars.LEVEL0_data[1]
@@ -190,6 +190,7 @@ start
 			vars.split = 0;
 			vars.totalGameTime = 0.01;
 			vars.juststarted = true;
+			vars.justsplitted = false;
 			print("START");
 			return true;
 		}
@@ -214,6 +215,7 @@ split
 				|| current.anim[7] != 195)
 			{
 				vars.split++;
+				vars.justsplitted = true;
 				return true;
 			}
 		}
@@ -223,6 +225,7 @@ split
 		&& current.level_data[2] == vars.LEVEL2_data[2]) // Level 2
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 2 && current.level_data[0] == vars.LEVEL3_data[0]
@@ -230,6 +233,7 @@ split
 		&& current.level_data[2] == vars.LEVEL3_data[2]) // Level 3
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 3 && current.level_data[0] == vars.LEVEL4_data[0]
@@ -237,6 +241,7 @@ split
 		&& current.level_data[2] == vars.LEVEL4_data[2]) // Level 4
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 4 && current.level_data[0] == vars.LEVEL5_data[0]
@@ -244,6 +249,7 @@ split
 		&& current.level_data[2] == vars.LEVEL5_data[2]) // Level 5
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 5 && current.level_data[0] == vars.LEVEL6_data[0]
@@ -251,6 +257,7 @@ split
 		&& current.level_data[2] == vars.LEVEL6_data[2]) // Level 6
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 6 && current.level_data[0] == vars.LEVEL7_data[0]
@@ -258,6 +265,7 @@ split
 		&& current.level_data[2] == vars.LEVEL7_data[2]) // Level 7
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 7 && current.level_data[0] == vars.LEVEL8_data[0]
@@ -265,6 +273,7 @@ split
 		&& current.level_data[2] == vars.LEVEL8_data[2]) // Level 8
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 8 && current.level_data[0] == vars.LEVEL9_data[0]
@@ -272,6 +281,7 @@ split
 		&& current.level_data[2] == vars.LEVEL9_data[2]) // Level 9
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 9 && current.level_data[0] == vars.LEVEL10_data[0]
@@ -279,6 +289,7 @@ split
 		&& current.level_data[2] == vars.LEVEL10_data[2]) // Level 10
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 10 && current.level_data[0] == vars.LEVEL11_data[0]
@@ -286,6 +297,7 @@ split
 		&& current.level_data[2] == vars.LEVEL11_data[2]) // Level 11
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 11 && current.level_data[0] == vars.LEVEL12_data[0]
@@ -293,6 +305,7 @@ split
 		&& current.level_data[2] == vars.LEVEL12_data[2]) // Level 12
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 12 && current.level_data[0] == vars.LEVEL13_data[0]
@@ -300,6 +313,7 @@ split
 		&& current.level_data[2] == vars.LEVEL13_data[2]) // Level 13
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 13 && current.level_data[0] == vars.LEVEL14_data[0]
@@ -307,6 +321,7 @@ split
 		&& current.level_data[2] == vars.LEVEL14_data[2]) // Level 14
 	{
 		vars.split++;
+		vars.justsplitted = true;
 		return true;
 	}
 	else if (vars.split == 14 && current.level_data[0] == vars.LEVEL14_data[0]
@@ -343,11 +358,12 @@ reset
 			{
 				current.GameTime = TimeSpan.Zero;
 				vars.totalGameTime = 0;
+				vars.substractTime = 0;
+				vars.cutsceneTime = 0;
+				vars.cutsceneTimeStamp = 0;
+				vars.timeBool = false;
 				vars.currentTime = 0;
-				vars.pauseTime = 0;
-				vars.tempStartPause = DateTime.Now;
-				vars.loadingTime = 0;
-				vars.tempStartLoading = DateTime.Now;
+				vars.justsplitted = false;
 				
 				vars.resetlock = true;
 				vars.split = 0;
@@ -376,47 +392,61 @@ gameTime
 		
 		if(Convert.ToSingle(current.time) / 60 == 0)
 		{
-			vars.totalGameTime += vars.currentTime;
-			if((settings["MMTime"] && !current.not_mainmenu))
-				vars.totalGameTime += vars.pauseTime;
-				
-			vars.currentTime = 0;
-			vars.pauseTime = 0;
-			
-			if(settings["LoadingTime"] && current.loading_screen)
-				vars.loadingTime = (DateTime.Now - vars.tempStartLoading).TotalMilliseconds / 1000;
-			else
-				vars.tempStartLoading = DateTime.Now;
+			if (!vars.timeBool)
+			{
+				vars.totalGameTime += vars.currentTime;	
+				vars.totalGameTime -= vars.substractTime;
+				vars.totalGameTime -= vars.cutsceneTime;
+				vars.currentTime = 0;
+				vars.substractTime = 0;
+				vars.cutsceneTime = 0;
+				vars.cutsceneTimeStamp = 0;
+				vars.timeBool = true;
+			}			
 		}
 		else
 		{
-			vars.totalGameTime += vars.loadingTime;
-			vars.loadingTime = 0;
+			vars.timeBool = false;
 		
 			vars.currentTime = Convert.ToSingle(current.time) / 60;
-			
-			if(settings["F1time"] || settings["MessageTime"] || settings["MMTime"] || settings["LoadingTime"])
+		}
+		
+		if (vars.split == 0 && vars.totalGameTime == 0.01)
+		{
+			if (!(current.igtStart[0] == 0x55 && current.igtStart[1] == 0xF7))
 			{
-				if((settings["F1time"] && current.f1)
-					|| (settings["MessageTime"] && current.message == 1 && current.not_mainmenu)
-					|| (settings["MMTime"] && !current.not_mainmenu)
-					|| (settings["LoadingTime"] && current.loading_screen))
-				{
-					vars.pauseTime = (DateTime.Now - vars.tempStartPause).TotalMilliseconds / 1000;
-					vars.tempStartLoading = DateTime.Now;
-				}
-				else
-				{
-					vars.totalGameTime += vars.pauseTime;
-					vars.pauseTime = 0;
-					vars.tempStartPause = DateTime.Now;
-					vars.tempStartLoading = DateTime.Now;
-				}
+				vars.substractTime = vars.currentTime;
+				return TimeSpan.FromSeconds(0);
 			}
 		}
 		
-		//print(vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.pauseTime.ToString() + " " + vars.loadingTime.ToString());
+		if (vars.split == 0 && vars.currentTime < 1)
+		{
+			vars.justsplitted = true;
+		}
+		
+		if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted || current.loading_screen)
+		{
+			if (vars.cutsceneTimeStamp == 0)
+				vars.cutsceneTimeStamp = vars.currentTime;
+				
+			vars.cutsceneTime = vars.currentTime - vars.cutsceneTimeStamp;
+		}
+		else
+		{
+			vars.substractTime += vars.cutsceneTime;
+			vars.cutsceneTime = 0;
+			vars.cutsceneTimeStamp = 0;
+		}
+		
+		if (vars.justsplitted)
+		{
+			if (old.igtPause == 0 && current.igtPause != 0)
+				vars.justsplitted = false;
+		}
+		
+		//print("ONI TIME " + vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.substractTime.ToString() + " " + vars.cutsceneTime.ToString());
 			
-		return TimeSpan.FromSeconds(vars.totalGameTime + vars.currentTime + vars.pauseTime + vars.loadingTime );
+		return TimeSpan.FromSeconds(vars.totalGameTime + vars.currentTime - vars.substractTime - vars.cutsceneTime);
 	}
 }
