@@ -413,7 +413,8 @@ gameTime
 		
 		if (vars.split == 0 && vars.totalGameTime == 0.01)
 		{
-			if (!(current.igtStart[0] == 0x55 && current.igtStart[1] == 0xF7))
+			//if (!(current.igtStart[0] == 0x55 && current.igtStart[1] == 0xF7))
+			if (current.igtPause == 0)
 			{
 				vars.substractTime = vars.currentTime;
 				return TimeSpan.FromSeconds(0);
