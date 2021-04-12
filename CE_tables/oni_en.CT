@@ -4,7 +4,7 @@
     <CheatEntry>
       <ID>0</ID>
       <Description>"level_data"</Description>
-      <LastState Value="0063FA00" RealAddress="005EB6F0"/>
+      <LastState Value="00647134" RealAddress="005EB6F0"/>
       <ShowAsHex>1</ShowAsHex>
       <VariableType>4 Bytes</VariableType>
       <Address>oni.exe+1EB6F0</Address>
@@ -12,9 +12,9 @@
     <CheatEntry>
       <ID>1</ID>
       <Description>"anim"</Description>
-      <LastState Value="148 83 132 196 17 28 112 66" RealAddress="005EB700"/>
-      <VariableType>Array of byte</VariableType>
-      <ByteLength>8</ByteLength>
+      <LastState Value="C3A2983AC488C6E5" RealAddress="005EB700"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>8 Bytes</VariableType>
       <Address>oni.exe+1EB700</Address>
     </CheatEntry>
     <CheatEntry>
@@ -46,7 +46,7 @@
     <CheatEntry>
       <ID>5</ID>
       <Description>"coord_x"</Description>
-      <LastState Value="-0.0007653511711" RealAddress="0766636C"/>
+      <LastState Value="0.05603147298" RealAddress="0769636C"/>
       <VariableType>Float</VariableType>
       <Address>oni.exe+1ECE7C</Address>
       <Offsets>
@@ -57,7 +57,7 @@
     <CheatEntry>
       <ID>6</ID>
       <Description>"coord_y"</Description>
-      <LastState Value="-0.0001227014145" RealAddress="07666374"/>
+      <LastState Value="-0.0576909706" RealAddress="07696374"/>
       <VariableType>Float</VariableType>
       <Address>oni.exe+1ECE7C</Address>
       <Offsets>
@@ -68,7 +68,7 @@
     <CheatEntry>
       <ID>7</ID>
       <Description>"konoko_hp"</Description>
-      <LastState Value="396" RealAddress="075B12D8"/>
+      <LastState Value="200" RealAddress="075E12D8"/>
       <VariableType>4 Bytes</VariableType>
       <Address>oni.exe+236514</Address>
       <Offsets>
@@ -94,7 +94,7 @@
     <CheatEntry>
       <ID>10</ID>
       <Description>"time"</Description>
-      <LastState Value="36" RealAddress="006582C0"/>
+      <LastState Value="3210" RealAddress="006582C0"/>
       <VariableType>4 Bytes</VariableType>
       <Address>oni.exe+2582C0</Address>
     </CheatEntry>
@@ -108,8 +108,8 @@
     <CheatEntry>
       <ID>12</ID>
       <Description>"igtPause"</Description>
-      <LastState Value="0" RealAddress="077179EC"/>
-      <VariableType>Byte</VariableType>
+      <LastState Value="256" RealAddress="077479EC"/>
+      <VariableType>2 Bytes</VariableType>
       <Address>oni.exe+1ECE7C</Address>
       <Offsets>
         <Offset>1679AC</Offset>
@@ -118,8 +118,9 @@
     <CheatEntry>
       <ID>13</ID>
       <Description>"dialog"</Description>
-      <LastState Value="0" RealAddress="075B12A4"/>
-      <VariableType>Byte</VariableType>
+      <LastState Value="1000C000" RealAddress="075E12A4"/>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>4 Bytes</VariableType>
       <Address>oni.exe+236514</Address>
       <Offsets>
         <Offset>4</Offset>

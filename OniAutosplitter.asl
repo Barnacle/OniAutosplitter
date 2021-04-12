@@ -1,11 +1,12 @@
+// 12 april 2021
+
 state("Oni", "EN")
 {
-	int level_data : 0x1EB6F0;
-	byte8 anim : 0x1EB700;
+	int level_data : 0x1EB6F0; // detect level
+	ulong anim : 0x1EB700; // check if it's training or not
 	string20 save_point: 0x1ECC10; // "    Save Point 1"
 	
-	bool preload_state : 0x1EB84C;
-	bool endcheck : 0x1EC0C4;
+	bool endcheck : 0x1EC0C4; // check Muro kill
 	
 	float coord_x : 0x1ECE7C, 0xB0, 0xC4;
 	float coord_y : 0x1ECE7C, 0xB0, 0xCC;
@@ -22,10 +23,9 @@ state("Oni", "EN")
 state("Oni", "RU")
 {
 	int level_data : 0x1E70B8;
-	byte8 anim : 0x1E70C4;
+	ulong anim : 0x1E70C4;
 	string20 save_point: 0x1E8580;
 	
-	bool preload_state : 0x1E71F8;
 	bool endcheck : 0x1E7A78;
 	
 	float coord_x : 0x1e87d4, 0xB0, 0xC4;
@@ -46,15 +46,6 @@ init
 	vars.Konoko_Speed = 0;
 	vars.Konoko_HP_Shield = "0/0";
 	vars.Enemy_HP = 0;
-	
-	vars.totalGameTime = 0;
-	vars.substractTime = 0;
-	vars.timeBool = false;
-	vars.currentTime = 0;
-	
-	vars.resetlock = false;
-	vars.juststarted = false;
-	vars.justsplitted = false;
 	
 	// Detects current game version.
 	if (modules.First().ModuleMemorySize == 3067904)
@@ -112,9 +103,6 @@ update
 	vars.Konoko_Speed = current.speed;
 	vars.Konoko_HP_Shield = current.konoko_hp.ToString() + "/" + current.konoko_shield.ToString();
 	vars.Enemy_HP = current.enemy_hp;
-	
-	if(current.preload_state == false)
-		vars.resetlock = false;
 }
 
 start
@@ -124,28 +112,18 @@ start
 	vars.substractTime = 0;
 	vars.cutsceneTime = 0;
 	vars.cutsceneTimeStamp = 0;
-	vars.timeBool = false;
 	vars.currentTime = 0;
 	
-	if (current.level_data == vars.LEVEL0_data
-		&& current.save_point == "")
+	if (current.level_data == vars.LEVEL0_data &&
+		current.save_point == "" &&
+		current.anim == 0xC3A90FA5C48C7D82)
 	{
-		if (current.anim[0] == 130
-			&& current.anim[1] == 125
-			&& current.anim[2] == 140
-			&& current.anim[3] == 196
-			&& current.anim[4] == 165
-			&& current.anim[5] == 15
-			&& current.anim[6] == 169
-			&& current.anim[7] == 195)
-		{
-			vars.split = 0;
-			vars.totalGameTime = 0.01;
-			vars.juststarted = true;
-			vars.justsplitted = false;
-			print("START");
-			return true;
-		}
+		vars.split = 0;
+		vars.totalGameTime = 0.01;
+		vars.juststarted = true;
+		vars.justsplitted = false;
+		print("START");
+		return true;
 	}
 }
 
@@ -153,21 +131,11 @@ split
 {
 	if (vars.split == 0 && current.level_data == vars.LEVEL1_data) // Level 1
 	{
-		if (current.endcheck == true)
+		if (current.endcheck == true && current.anim != 0xC3A90FA5C48C7D82)
 		{
-			if (current.anim[0] != 130
-				|| current.anim[1] != 125
-				|| current.anim[2] != 140
-				|| current.anim[3] != 196
-				|| current.anim[4] != 165
-				|| current.anim[5] != 15
-				|| current.anim[6] != 169
-				|| current.anim[7] != 195)
-			{
-				vars.split++;
-				vars.justsplitted = true;
-				return true;
-			}
+			vars.split++;
+			vars.justsplitted = true;
+			return true;
 		}
 	}
 	else if (
@@ -205,35 +173,24 @@ split
 
 reset
 {
-	if(vars.resetlock == false && vars.juststarted == false)
+	if(vars.juststarted == false)
 	{
 		if (current.level_data == vars.LEVEL0_data &&
-			current.preload_state == true &&
-			current.save_point == "")
+			current.save_point == "" &&
+			current.anim == 0xC3A90FA5C48C7D82)
 		{
-			if (current.anim[0] == 130
-				&& current.anim[1] == 125
-				&& current.anim[2] == 140
-				&& current.anim[3] == 196
-				&& current.anim[4] == 165
-				&& current.anim[5] == 15
-				&& current.anim[6] == 169
-				&& current.anim[7] == 195)
-			{
-				current.GameTime = TimeSpan.Zero;
-				vars.totalGameTime = 0;
-				vars.substractTime = 0;
-				vars.cutsceneTime = 0;
-				vars.cutsceneTimeStamp = 0;
-				vars.timeBool = false;
-				vars.currentTime = 0;
-				vars.justsplitted = false;
-				
-				vars.resetlock = true;
-				vars.split = 0;
-				print("RESET");
-				return true;
-			}
+			current.GameTime = TimeSpan.Zero;
+			vars.totalGameTime = 0.01;
+			vars.substractTime = 0;
+			vars.cutsceneTime = 0;
+			vars.cutsceneTimeStamp = 0;
+			vars.currentTime = 0;
+			vars.juststarted = true;
+			vars.justsplitted = false;			
+			vars.split = 0;
+			
+			print("RESET");
+			return true;
 		}
 	}
 }
@@ -243,39 +200,27 @@ gameTime
 	try{
 		if(vars.totalGameTime > 0)
 		{
-			if (!(current.anim[0] == 130
-					&& current.anim[1] == 125
-					&& current.anim[2] == 140
-					&& current.anim[3] == 196
-					&& current.anim[4] == 165
-					&& current.anim[5] == 15
-					&& current.anim[6] == 169
-					&& current.anim[7] == 195))
+			if (current.anim != 0xC3A90FA5C48C7D82)
 			{
 				vars.juststarted = false;
 			}
 			
 			if(Convert.ToSingle(current.time) / 60 == 0)
 			{
-				if (!vars.timeBool)
-				{
-					vars.totalGameTime += vars.currentTime;	
-					vars.totalGameTime -= vars.substractTime;
-					vars.totalGameTime -= vars.cutsceneTime;
-					vars.currentTime = 0;
-					vars.substractTime = 0;
-					vars.cutsceneTime = 0;
-					vars.cutsceneTimeStamp = 0;
-					vars.timeBool = true;
-				}			
+				vars.totalGameTime += vars.currentTime;	
+				vars.totalGameTime -= vars.substractTime;
+				vars.totalGameTime -= vars.cutsceneTime;
+				vars.currentTime = 0;
+				vars.substractTime = 0;
+				vars.cutsceneTime = 0;
+				vars.cutsceneTimeStamp = 0;			
 			}
 			else
 			{
-				vars.timeBool = false;
-			
 				vars.currentTime = Convert.ToSingle(current.time) / 60;
 			}
 			
+			// Pause during Shinatama intro on training
 			if (vars.split == 0 && vars.totalGameTime == 0.01)
 			{
 				if (current.igtPause == 0)
@@ -285,6 +230,7 @@ gameTime
 				}
 			}
 			
+			// Fix timer not paused between L0 and L1
 			if (vars.split == 0 && vars.currentTime < 1)
 			{
 				vars.justsplitted = true;
@@ -304,13 +250,14 @@ gameTime
 				vars.cutsceneTimeStamp = 0;
 			}
 			
+			// Fix timer not paused somewhere between loading screen and cutscene on a new level
 			if (vars.justsplitted)
 			{
 				if (old.igtPause == 0 && current.igtPause != 0)
 					vars.justsplitted = false;
 			}
 			
-			//print("ONI TIME " + vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.substractTime.ToString() + " " + vars.cutsceneTime.ToString());
+			// print("ONI TIME " + vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.substractTime.ToString() + " " + vars.cutsceneTime.ToString());
 				
 			return TimeSpan.FromSeconds(vars.totalGameTime + vars.currentTime - vars.substractTime - vars.cutsceneTime);
 		}
