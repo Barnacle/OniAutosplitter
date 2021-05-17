@@ -4,20 +4,22 @@ state("Oni", "EN")
 {
 	int level_data : 0x1EB6F0; // detect level
 	ulong anim : 0x1EB700; // check if it's training or not
-	string20 save_point: 0x1ECC10; // "    Save Point 1"
+	string20 save_point : 0x1ECC10; // "    Save Point 1"
 	
 	bool endcheck : 0x1EC0C4; // check Muro kill
 	
 	float coord_x : 0x1ECE7C, 0xB0, 0xC4;
 	float coord_y : 0x1ECE7C, 0xB0, 0xCC;
 	int konoko_hp : 0x236514, 0x38;
-	int konoko_shield: 0x230FE8;
+	int konoko_shield : 0x230FE8;
 	int enemy_hp : 0x23a2a0, 0x38;
 	
 	int time : 0x2582C0;	
 	bool cutscene : 0x0014D64C;
-	short igtPause: 0x1ECE7C, 0x1679AC;
-	int dialog: 0x236514, 0x04;
+	int cutsceneSegment : 0x2364C4;
+	short igtPause : 0x1ECE7C, 0x1679AC;
+	int dialog : 0x236514, 0x04;
+	int level : 0x1ED398;
 }
 
 state("Oni", "RU")
@@ -236,7 +238,7 @@ gameTime
 				vars.justsplitted = true;
 			}
 			
-			if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted)
+			if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted || (current.level == 6 && current.cutsceneSegment == 214623816))
 			{
 				if (vars.cutsceneTimeStamp == 0)
 					vars.cutsceneTimeStamp = vars.currentTime;
