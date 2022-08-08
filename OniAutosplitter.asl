@@ -1,4 +1,4 @@
-// 18 may 2021
+// 08 august 2022
 
 state("Oni", "EN")
 {
@@ -20,6 +20,7 @@ state("Oni", "EN")
 	short igtPause : 0x1ECE7C, 0x1679AC;
 	int dialog : 0x236514, 0x04;
 	int level : 0x1ED398;
+	bool level5_endCutscene : 0x1ECE92;
 }
 
 state("Oni", "RU")
@@ -45,6 +46,9 @@ startup {
 
 init
 {	
+	timer.IsGameTimePaused = false;
+    game.Exited += (s, e) => timer.IsGameTimePaused = true;
+
 	vars.Konoko_Speed = 0;
 	vars.Konoko_HP_Shield = "0/0";
 	vars.Enemy_HP = 0;
@@ -111,7 +115,7 @@ start
 {
 	current.GameTime = TimeSpan.Zero;
 	vars.totalGameTime = 0;
-	vars.substractTime = 0;
+	vars.subtractTime = 0;
 	vars.cutsceneTime = 0;
 	vars.cutsceneTimeStamp = 0;
 	vars.currentTime = 0;
@@ -183,7 +187,7 @@ reset
 		{
 			current.GameTime = TimeSpan.Zero;
 			vars.totalGameTime = 0.01;
-			vars.substractTime = 0;
+			vars.subtractTime = 0;
 			vars.cutsceneTime = 0;
 			vars.cutsceneTimeStamp = 0;
 			vars.currentTime = 0;
@@ -210,10 +214,10 @@ gameTime
 			if(Convert.ToSingle(current.time) / 60 == 0)
 			{
 				vars.totalGameTime += vars.currentTime;	
-				vars.totalGameTime -= vars.substractTime;
+				vars.totalGameTime -= vars.subtractTime;
 				vars.totalGameTime -= vars.cutsceneTime;
 				vars.currentTime = 0;
-				vars.substractTime = 0;
+				vars.subtractTime = 0;
 				vars.cutsceneTime = 0;
 				vars.cutsceneTimeStamp = 0;			
 			}
@@ -227,7 +231,7 @@ gameTime
 			{
 				if (current.igtPause == 0)
 				{
-					vars.substractTime = vars.currentTime;
+					vars.subtractTime = vars.currentTime;
 					return TimeSpan.FromSeconds(0);
 				}
 			}
@@ -238,7 +242,7 @@ gameTime
 				vars.justsplitted = true;
 			}
 			
-			if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted || (current.level == 6 && current.cutsceneSegment == 214623816))
+			if (current.igtPause == 0 || !current.cutscene || current.dialog == 0x1081E000 || vars.justsplitted || (current.level == 6 && !current.save_point.Contains("0") && current.level5_endCutscene))
 			{
 				if (vars.cutsceneTimeStamp == 0)
 					vars.cutsceneTimeStamp = vars.currentTime;
@@ -247,7 +251,7 @@ gameTime
 			}
 			else
 			{
-				vars.substractTime += vars.cutsceneTime;
+				vars.subtractTime += vars.cutsceneTime;
 				vars.cutsceneTime = 0;
 				vars.cutsceneTimeStamp = 0;
 			}
@@ -259,9 +263,9 @@ gameTime
 					vars.justsplitted = false;
 			}
 			
-			// print("ONI TIME " + vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.substractTime.ToString() + " " + vars.cutsceneTime.ToString());
+			// print("ONI TIME " + vars.totalGameTime.ToString() + " " + vars.currentTime.ToString() + " " + vars.subtractTime.ToString() + " " + vars.cutsceneTime.ToString());
 				
-			return TimeSpan.FromSeconds(vars.totalGameTime + vars.currentTime - vars.substractTime - vars.cutsceneTime);
+			return TimeSpan.FromSeconds(vars.totalGameTime + vars.currentTime - vars.subtractTime - vars.cutsceneTime);
 		}
 	}
 	catch {}
