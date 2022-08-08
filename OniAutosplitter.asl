@@ -47,7 +47,7 @@ startup {
 init
 {	
 	timer.IsGameTimePaused = false;
-    game.Exited += (s, e) => timer.IsGameTimePaused = true;
+	game.Exited += (s, e) => timer.IsGameTimePaused = true;
 
 	vars.Konoko_Speed = 0;
 	vars.Konoko_HP_Shield = "0/0";
