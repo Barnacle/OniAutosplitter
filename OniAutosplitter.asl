@@ -1,8 +1,8 @@
-// 08 august 2022
+// 10 october 2022
 
 state("Oni", "EN")
 {
-	int level_data : 0x1EB6F0; // detect level
+	int levelId : 0x1ED2EC;
 	ulong anim : 0x1EB700; // check if it's training or not
 	string20 save_point : 0x1ECC10; // "    Save Point 1"
 	
@@ -25,7 +25,7 @@ state("Oni", "EN")
 
 state("Oni", "RU")
 {
-	int level_data : 0x1E70B8;
+	int levelId : 0x1E8C38;
 	ulong anim : 0x1E70C4;
 	string20 save_point: 0x1E8580;
 	
@@ -58,44 +58,12 @@ init
 	{
 		print("RU");
 		version = "RU";
-		
-		vars.LEVEL0_data = 0x0642A74;
-		vars.LEVEL1_data = 0x0642A74;
-		vars.LEVEL2_data = 0x063AF68;
-		vars.LEVEL3_data = 0x063AF50;
-		vars.LEVEL4_data = 0x063B01C;
-		vars.LEVEL5_data = 0x063B0DC;
-		vars.LEVEL6_data = 0x0641AA8;
-		vars.LEVEL7_data = 0x063FB88;
-		vars.LEVEL8_data = 0x063B13C;
-		vars.LEVEL9_data = 0x063B040;
-		vars.LEVEL10_data = 0x063B01C;
-		vars.LEVEL11_data = 0x063B940;
-		vars.LEVEL12_data = 0x063BA84;
-		vars.LEVEL13_data = 0x063B1B4;
-		vars.LEVEL14_data = 0x063B340;
 	}
 	else
 	{
 		// print(modules.First().ModuleMemorySize.ToString()); // 3092480
 		print("EN");
 		version = "EN";
-		
-		vars.LEVEL0_data = 0x0647134;
-		vars.LEVEL1_data = 0x0647134;
-		vars.LEVEL2_data = 0x063F628;
-		vars.LEVEL3_data = 0x063F610;
-		vars.LEVEL4_data = 0x063F6DC;
-		vars.LEVEL5_data = 0x063F79C;
-		vars.LEVEL6_data = 0x0646168;
-		vars.LEVEL7_data = 0x0644248;
-		vars.LEVEL8_data = 0x063F7FC;
-		vars.LEVEL9_data = 0x063F700;
-		vars.LEVEL10_data = 0x063F6DC;
-		vars.LEVEL11_data = 0x0640000;
-		vars.LEVEL12_data = 0x0640144;
-		vars.LEVEL13_data = 0x063F874;
-		vars.LEVEL14_data = 0x063FA00;
 	}
 }
 
@@ -120,7 +88,7 @@ start
 	vars.cutsceneTimeStamp = 0;
 	vars.currentTime = 0;
 	
-	if (current.level_data == vars.LEVEL0_data &&
+	if (current.levelId == 1 &&
 		current.save_point == "" &&
 		current.anim == 0xC3A90FA5C48C7D82)
 	{
@@ -135,7 +103,7 @@ start
 
 split
 {
-	if (vars.split == 0 && current.level_data == vars.LEVEL1_data) // Level 1
+	if (vars.split == 0 && current.levelId == 1) // Level 1
 	{
 		if (current.endcheck == true && current.anim != 0xC3A90FA5C48C7D82)
 		{
@@ -145,28 +113,29 @@ split
 		}
 	}
 	else if (
-				(vars.split == 1 && current.level_data == vars.LEVEL2_data) ||
-				(vars.split == 2 && current.level_data == vars.LEVEL3_data) ||
-				(vars.split == 3 && current.level_data == vars.LEVEL4_data) ||
-				(vars.split == 4 && current.level_data == vars.LEVEL5_data) ||
-				(vars.split == 5 && current.level_data == vars.LEVEL6_data) ||
-				(vars.split == 6 && current.level_data == vars.LEVEL7_data) ||
-				(vars.split == 7 && current.level_data == vars.LEVEL8_data) ||
-				(vars.split == 8 && current.level_data == vars.LEVEL9_data) ||
-				(vars.split == 9 && current.level_data == vars.LEVEL10_data) ||
-				(vars.split == 10 && current.level_data == vars.LEVEL11_data) ||
-				(vars.split == 11 && current.level_data == vars.LEVEL12_data) ||
-				(vars.split == 12 && current.level_data == vars.LEVEL13_data) ||
-				(vars.split == 13 && current.level_data == vars.LEVEL14_data)
+				(vars.split == 1 && current.levelId == 2) ||
+				(vars.split == 2 && current.levelId == 3) ||
+				(vars.split == 3 && current.levelId == 4) ||
+				(vars.split == 4 && current.levelId == 6) ||
+				(vars.split == 5 && current.levelId == 8) ||
+				(vars.split == 6 && current.levelId == 9) ||
+				(vars.split == 7 && current.levelId == 10) ||
+				(vars.split == 8 && current.levelId == 11) ||
+				(vars.split == 9 && current.levelId == 12) ||
+				(vars.split == 10 && current.levelId == 13) ||
+				(vars.split == 11 && current.levelId == 14) ||
+				(vars.split == 12 && current.levelId == 18) ||
+				(vars.split == 13 && current.levelId == 19)
 			)
 	{
-		vars.split++;
-		vars.justsplitted = true;
-		return true;
+		if (current.save_point == "")
+		{
+			vars.split++;
+			vars.justsplitted = true;
+			return true;
+		}
 	}
-	else if (vars.split == 14 &&
-			current.level_data == vars.LEVEL14_data &&
-			current.save_point.Contains("4") ) // END
+	else if (vars.split == 14 && current.levelId == 19 && current.save_point.Contains("4") ) // END
 	{
 		if (current.endcheck == true)
 		{
@@ -181,7 +150,7 @@ reset
 {
 	if(vars.juststarted == false)
 	{
-		if (current.level_data == vars.LEVEL0_data &&
+		if (current.levelId == 1 &&
 			current.save_point == "" &&
 			current.anim == 0xC3A90FA5C48C7D82)
 		{
